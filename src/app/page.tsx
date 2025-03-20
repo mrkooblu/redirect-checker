@@ -166,7 +166,7 @@ export default function Home() {
       <BackgroundPattern />
       <Container $isFirstVisit={isFirstVisit}>
         <Header>
-          <h1>HTTP Status & Redirect Checker</h1>
+          <h1>301 URL Redirect & HTTP Status Checker</h1>
           <Description>
             Check the HTTP status of any URL instantly. Track redirect chains, view response headers, 
             and analyze HTTP status codes.

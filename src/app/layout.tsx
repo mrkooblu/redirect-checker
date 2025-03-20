@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import StyledComponentsRegistry from '@/lib/registry';
 
 export const metadata: Metadata = {
-  title: 'URL Redirect Checker - Check HTTP Status and Redirect Chains',
+  title: '301 URL Redirect & HTTP Status Checker - Track Redirect Chains',
   description: 'Check HTTP status of any URL, analyze redirect chains, view response headers, and track HTTP status codes.',
 };
 

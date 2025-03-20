@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { 
   FiCheck, FiX, FiArrowRight, FiAlertTriangle, FiInfo, 
   FiDownload, FiShare2, FiCopy, FiExternalLink, FiLock, 
@@ -17,6 +17,13 @@ interface ResultsViewProps {
   onCheckAnother: () => void;
 }
 
+// Define animations
+const pulseAnimation = keyframes`
+  0% { opacity: 0.6; }
+  50% { opacity: 0.8; }
+  100% { opacity: 0.6; }
+`;
+
 const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onCheckAnother }) => {
   const [activeTab, setActiveTab] = useState<'summary' | 'chain' | 'headers' | 'raw'>('summary');
   const [collapsedSections, setCollapsedSections] = useState<Record<string, boolean>>({
@@ -27,19 +34,24 @@ const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onC
   const [copied, setCopied] = useState<string | null>(null);
 
   // Don't show result content if loading or error or no result
-  if (isLoading || error || !result) {
+  if (isLoading) {
     return (
       <ResultsContainer>
-        {isLoading && (
-          <LoadingContainer>
-            <LoadingSpinner />
-            <LoadingText>
-              Checking URL and following redirects...
-              <LoadingSubtext>This may take a moment depending on the number of redirects</LoadingSubtext>
-            </LoadingText>
-          </LoadingContainer>
-        )}
-        
+        <LoadingContainer>
+          <LoadingSpinner />
+          <LoadingText>
+            Checking URL and following redirects...
+            <LoadingSubtext>This may take a moment depending on the number of redirects</LoadingSubtext>
+          </LoadingText>
+          <PlaceholderContent />
+        </LoadingContainer>
+      </ResultsContainer>
+    );
+  }
+  
+  if (error || !result) {
+    return (
+      <ResultsContainer>
         {error && (
           <ErrorContainer>
             <ErrorIcon>⚠️</ErrorIcon>
@@ -939,6 +951,15 @@ const ErrorAction = styled.button`
   &:hover {
     text-decoration: underline;
   }
+`;
+
+const PlaceholderContent = styled.div`
+  height: 200px;
+  background-color: ${props => props.theme.colors.background.secondary}30;
+  border-radius: ${props => props.theme.borderRadius.md};
+  margin-top: ${props => props.theme.spacing.xl};
+  opacity: 0.6;
+  animation: ${pulseAnimation} 1.5s infinite ease-in-out;
 `;
 
 export default ResultsView; 

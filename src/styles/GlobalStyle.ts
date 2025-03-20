@@ -1,6 +1,11 @@
 import { createGlobalStyle } from 'styled-components';
 
 const GlobalStyle = createGlobalStyle`
+  /* Prevent FOUC (Flash of Unstyled Content) */
+  html {
+    visibility: visible;
+  }
+
   * {
     box-sizing: border-box;
     margin: 0;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RedirectResult } from '@/types/redirect';
 import { getStatusCodeClass, getStatusDescription } from '@/utils/redirectUtils';
@@ -9,7 +9,14 @@ interface StatusSummaryProps {
 }
 
 const StatusSummary: React.FC<StatusSummaryProps> = ({ result }) => {
-  if (!result || !result.steps || result.steps.length === 0) {
+  const [mounted, setMounted] = useState(false);
+  
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  if (!mounted || !result || !result.steps || result.steps.length === 0) {
     return null;
   }
 

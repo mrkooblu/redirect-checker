@@ -2,9 +2,6 @@
 
 import React, { useState, useEffect } from 'react';
 import styled, { keyframes } from 'styled-components';
-import { ThemeProvider } from 'styled-components';
-import GlobalStyle from '@/styles/GlobalStyle';
-import theme from '@/styles/theme';
 import UrlInputForm from '@/components/UrlInputForm';
 import StatusSummary from '@/components/StatusSummary';
 import RedirectChain from '@/components/RedirectChain';
@@ -12,6 +9,7 @@ import HeadersTable from '@/components/HeadersTable';
 import ResultsView from '@/components/ResultsView';
 import { RedirectResult } from '@/types/redirect';
 import { FiLink, FiArrowRight, FiClock, FiCode } from 'react-icons/fi';
+import StyledComponentsProvider from '@/lib/StyledComponentsProvider';
 
 // Define animations OUTSIDE of the component function
 const fadeIn = keyframes`
@@ -37,11 +35,38 @@ const Container = styled.div<{ $isFirstVisit: boolean }>`
   min-height: 100vh;
   position: relative;
   background-color: ${props => props.theme.colors.background.primary};
-  animation: ${props => props.$isFirstVisit ? fadeIn : 'none'} 0.8s ease-out;
+  animation: ${fadeIn} 0.5s ease-out;
+  transition: opacity 0.3s ease-in-out;
+  opacity: ${props => props.$isFirstVisit ? 0.99 : 1};
 `;
 
 const ResultsContainer = styled.div`
   animation: ${fadeIn} 0.5s ease-out;
+  transition: opacity 0.3s ease;
+`;
+
+// Loading indicator for initial style loading
+const LoadingOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+`;
+
+const LoadingSpinner = styled.div`
+  width: 50px;
+  height: 50px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #3498db;
+  border-radius: 50%;
+  animation: ${spin} 1s linear infinite;
 `;
 
 // Component function begins here
@@ -51,6 +76,19 @@ export default function Home() {
   const [result, setResult] = useState<RedirectResult | null>(null);
   const [activeTab, setActiveTab] = useState<'chain' | 'headers'>('chain');
   const [isFirstVisit, setIsFirstVisit] = useState<boolean>(true);
+  const [stylesLoaded, setStylesLoaded] = useState<boolean>(false);
+  
+  // Load cached result on first render
+  useEffect(() => {
+    try {
+      const cachedResult = localStorage.getItem('cachedRedirectResult');
+      if (cachedResult) {
+        setResult(JSON.parse(cachedResult));
+      }
+    } catch (err) {
+      console.error('Error loading cached result:', err);
+    }
+  }, []);
 
   // Clear the first visit flag after component mounts
   useEffect(() => {
@@ -58,6 +96,15 @@ export default function Home() {
     const timer = setTimeout(() => {
       setIsFirstVisit(false);
     }, 1000);
+    return () => clearTimeout(timer);
+  }, []);
+  
+  // Set styles loaded after initial render
+  useEffect(() => {
+    // Small delay to ensure styles are applied
+    const timer = setTimeout(() => {
+      setStylesLoaded(true);
+    }, 300);
     return () => clearTimeout(timer);
   }, []);
 
@@ -82,6 +129,12 @@ export default function Home() {
 
       const data = await response.json();
       setResult(data);
+      // Cache the result
+      try {
+        localStorage.setItem('cachedRedirectResult', JSON.stringify(data));
+      } catch (err) {
+        console.error('Error caching result:', err);
+      }
       // Set active tab to 'chain' if there are redirects, otherwise to 'headers'
       setActiveTab(data.redirectCount > 0 ? 'chain' : 'headers');
     } catch (err) {
@@ -100,9 +153,16 @@ export default function Home() {
     return `${Math.floor(seconds / 86400)} days ago`;
   };
 
+  if (!stylesLoaded) {
+    return (
+      <LoadingOverlay>
+        <LoadingSpinner />
+      </LoadingOverlay>
+    );
+  }
+
   return (
-    <ThemeProvider theme={theme}>
-      <GlobalStyle />
+    <StyledComponentsProvider>
       <BackgroundPattern />
       <Container $isFirstVisit={isFirstVisit}>
         <Header>
@@ -146,7 +206,7 @@ export default function Home() {
           </ResultsContainer>
         </MainContent>
       </Container>
-    </ThemeProvider>
+    </StyledComponentsProvider>
   );
 }
 

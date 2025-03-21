@@ -266,6 +266,10 @@ const Description = styled.p`
   margin: 0 auto;
   color: ${props => props.theme.colors.text.secondary};
   font-size: 1rem;
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    padding: 0 ${props => props.theme.spacing.md};
+  }
 `;
 
 const HeroIllustration = styled.div`

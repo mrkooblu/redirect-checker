@@ -156,7 +156,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onC
       return {
         title: 'Too many redirects detected',
         description: 'Long redirect chains can slow down your website and waste crawl budget',
-        cta: 'Fix redirect chains with Semrush Site Audit',
+        cta: 'Fix redirect chains with Semrush',
         link: 'https://www.semrush.com/siteaudit/'
       };
     }
@@ -589,7 +589,9 @@ const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onC
                               <FiInfo size={16} />
                             </ExplanationIcon>
                             <ExplanationContent>
-                              <ExplanationTitle>{item.factor} (-{item.deduction} points)</ExplanationTitle>
+                              <ExplanationTitle>
+                                {item.factor} <span style={{ color: '#EF4444' }}>(-{item.deduction} points)</span>
+                              </ExplanationTitle>
                               <ExplanationText>
                                 {getExplanationText(item.factor)}
                               </ExplanationText>
@@ -1498,20 +1500,38 @@ const SeoImpactSummary = styled.div`
   margin-top: ${props => props.theme.spacing.md};
   padding-top: ${props => props.theme.spacing.md};
   border-top: 1px solid ${props => props.theme.colors.border}50;
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const SeoSummaryDetails = styled.div`
   flex: 1;
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    width: 100%;
+    margin-top: ${props => props.theme.spacing.sm};
+  }
 `;
 
 const SeoSummaryTitle = styled.div`
   font-size: ${props => props.theme.fontSizes.md};
   margin-bottom: ${props => props.theme.spacing.xs};
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    text-align: center;
+  }
 `;
 
 const SeoSummaryDescription = styled.div`
   font-size: ${props => props.theme.fontSizes.sm};
   color: ${props => props.theme.colors.text.secondary};
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    text-align: center;
+  }
 `;
 
 const ConsolidatedSemrushCTA = styled.div`
@@ -1721,10 +1741,11 @@ const ExplanationContent = styled.div`
   flex: 1;
 `;
 
-const ExplanationTitle = styled.h5`
-  margin: 0 0 ${props => props.theme.spacing.xs} 0;
-  font-size: ${props => props.theme.fontSizes.sm};
+const ExplanationTitle = styled.h4`
+  margin-bottom: ${props => props.theme.spacing.xs};
+  font-size: ${props => props.theme.fontSizes.md};
   font-weight: ${props => props.theme.fonts.weights.semibold};
+  color: ${props => props.theme.colors.text.primary};
 `;
 
 const ExplanationText = styled.p`
@@ -1740,14 +1761,28 @@ const ResultBasedRecommendation = styled.div`
   background-color: ${props => props.theme.colors.background.card};
   border-radius: ${props => props.theme.borderRadius.md};
   margin-bottom: ${props => props.theme.spacing.md};
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: ${props => props.theme.spacing.md};
+  }
 `;
 
 const RecIcon = styled.div`
   margin-right: ${props => props.theme.spacing.md};
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    margin-right: 0;
+  }
 `;
 
 const RecContent = styled.div`
   flex: 1;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    width: 100%;
+  }
 `;
 
 const RecTitle = styled.h3`
@@ -1776,6 +1811,11 @@ const RecCta = styled.a`
   &:hover {
     background-color: ${props => props.theme.colors.primary}80;
     text-decoration: none;
+  }
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    width: 100%;
+    justify-content: center;
   }
 `;
 
@@ -1819,6 +1859,13 @@ const SeoScoreCircle = styled.div<{ score: number }>`
   font-size: ${props => props.theme.fontSizes.xl};
   font-weight: ${props => props.theme.fonts.weights.semibold};
   color: white;
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    margin: 0 auto;
+    width: 65px;
+    height: 65px;
+    font-size: ${props => props.theme.fontSizes.xl};
+  }
 `;
 
 const SeoScoreDetails = styled.div`

@@ -56,6 +56,27 @@ const HEADER_DESCRIPTIONS: Record<string, string> = {
   'transfer-encoding': 'Specifies the form of encoding used to transfer the resource',
 };
 
+// Define the StatusCodeSpan component here
+interface StatusCodeSpanProps {
+  status: number;
+  isActive?: boolean;
+}
+
+const StatusCodeSpan = styled.span<StatusCodeSpanProps>`
+  color: ${props => {
+    // When button is active, use white color to match button text
+    if (props.isActive) return 'white';
+    
+    // Otherwise use status-based colors
+    if (props.status >= 200 && props.status < 300) return props.theme.colors.success;
+    if (props.status >= 300 && props.status < 400) return props.theme.colors.primary;
+    if (props.status >= 400 && props.status < 500) return props.theme.colors.warning;
+    if (props.status >= 500) return props.theme.colors.error;
+    return props.theme.colors.text.secondary;
+  }};
+  font-weight: ${props => props.theme.fonts.weights.bold};
+`;
+
 const HeadersTable: React.FC<HeadersTableProps> = ({ result }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStep, setSelectedStep] = useState<number>(
@@ -66,10 +87,8 @@ const HeadersTable: React.FC<HeadersTableProps> = ({ result }) => {
   const [groupByCategory, setGroupByCategory] = useState(true);
   const [copiedHeader, setCopiedHeader] = useState<string | null>(null);
   const [expandedHeaders, setExpandedHeaders] = useState<string[]>([]);
-  const [showTooltip, setShowTooltip] = useState<string | null>(null);
   const [isMobileView, setIsMobileView] = useState(false);
   const [isControlsVisible, setIsControlsVisible] = useState(true);
-  const tooltipRef = useRef<HTMLDivElement>(null);
 
   // Check for mobile view
   useEffect(() => {
@@ -91,20 +110,6 @@ const HeadersTable: React.FC<HeadersTableProps> = ({ result }) => {
       setSelectedStep(result.steps.length - 1);
     }
   }, [result]);
-
-  // Hide tooltip when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (tooltipRef.current && !tooltipRef.current.contains(event.target as Node)) {
-        setShowTooltip(null);
-      }
-    };
-    
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
 
   // Define getHeaderCategory function before it's used
   const getHeaderCategory = (name: string): string | null => {
@@ -242,7 +247,13 @@ const HeadersTable: React.FC<HeadersTableProps> = ({ result }) => {
               onClick={() => setSelectedStep(index)}
               isActive={selectedStep === index}
             >
-              Step {index + 1}: {step.statusCode}
+              <span>Step {index + 1}: </span>
+              <StatusCodeSpan 
+                status={step.statusCode} 
+                isActive={selectedStep === index}
+              >
+                {step.statusCode}
+              </StatusCodeSpan>
             </StepButton>
           ))}
         </StepSelector>
@@ -354,18 +365,11 @@ const HeadersTable: React.FC<HeadersTableProps> = ({ result }) => {
                       <HeaderNameContent>
                         {header.name}
                         {HEADER_DESCRIPTIONS[header.name] && (
-                          <InfoIconWrapper 
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setShowTooltip(showTooltip === header.name ? null : header.name);
-                            }}
-                          >
+                          <InfoIconWrapper>
                             <FiInfo size={14} />
-                            {showTooltip === header.name && (
-                              <Tooltip ref={tooltipRef}>
-                                {HEADER_DESCRIPTIONS[header.name]}
-                              </Tooltip>
-                            )}
+                            <Tooltip>
+                              {HEADER_DESCRIPTIONS[header.name]}
+                            </Tooltip>
                           </InfoIconWrapper>
                         )}
                         {header.performance && (
@@ -420,18 +424,11 @@ const HeadersTable: React.FC<HeadersTableProps> = ({ result }) => {
                   )}
                   {header.name}
                   {HEADER_DESCRIPTIONS[header.name] && (
-                    <InfoIconWrapper 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setShowTooltip(showTooltip === header.name ? null : header.name);
-                      }}
-                    >
+                    <InfoIconWrapper>
                       <FiInfo size={14} />
-                      {showTooltip === header.name && (
-                        <Tooltip ref={tooltipRef}>
-                          {HEADER_DESCRIPTIONS[header.name]}
-                        </Tooltip>
-                      )}
+                      <Tooltip>
+                        {HEADER_DESCRIPTIONS[header.name]}
+                      </Tooltip>
                     </InfoIconWrapper>
                   )}
                   {header.performance && (
@@ -912,25 +909,31 @@ const InfoIconWrapper = styled.span`
   
   &:hover {
     color: ${props => props.theme.colors.primary};
+    
+    & > div {
+      display: block;
+    }
   }
 `;
 
 const Tooltip = styled.div`
+  display: none;
   position: absolute;
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
   margin-top: ${props => props.theme.spacing.xs};
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-  background-color: ${props => props.theme.colors.background.card};
-  color: ${props => props.theme.colors.text.primary};
+  padding: ${props => props.theme.spacing.md} ${props => props.theme.spacing.md};
+  background-color: #2c3648;
+  color: white;
   font-size: ${props => props.theme.fontSizes.sm};
   border-radius: ${props => props.theme.borderRadius.sm};
   box-shadow: ${props => props.theme.shadows.md};
-  width: 200px;
-  text-align: center;
+  width: 280px;
+  text-align: left;
   z-index: 100;
   font-weight: normal;
+  line-height: 1.5;
   
   &:after {
     content: '';
@@ -939,7 +942,7 @@ const Tooltip = styled.div`
     left: 50%;
     transform: translateX(-50%);
     border: 6px solid transparent;
-    border-bottom-color: ${props => props.theme.colors.background.card};
+    border-bottom-color: #2c3648;
   }
 `;
 

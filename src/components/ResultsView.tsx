@@ -157,7 +157,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onC
         title: 'Too many redirects detected',
         description: 'Long redirect chains can slow down your website and waste crawl budget',
         cta: 'Fix redirect chains with Semrush Site Audit',
-        link: 'https://www.semrush.com/blog/redirects/'
+        link: 'https://www.semrush.com/siteaudit/'
       };
     }
     

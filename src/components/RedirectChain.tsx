@@ -120,24 +120,28 @@ const RedirectChain: React.FC<RedirectChainProps> = ({ result }) => {
               <LegendCode>2XX</LegendCode>
             </LegendBadge>
             <LegendLabel>Success</LegendLabel>
+            <LegendDescription>Request was received, understood, and processed successfully</LegendDescription>
           </LegendItem>
           <LegendItem>
             <LegendBadge className="status-3xx">
               <LegendCode>3XX</LegendCode>
             </LegendBadge>
             <LegendLabel>Redirect</LegendLabel>
+            <LegendDescription>Further action needed to complete the request (e.g., follow a new URL)</LegendDescription>
           </LegendItem>
           <LegendItem>
             <LegendBadge className="status-4xx">
               <LegendCode>4XX</LegendCode>
             </LegendBadge>
             <LegendLabel>Client Error</LegendLabel>
+            <LegendDescription>Request contains bad syntax or cannot be fulfilled (e.g., 404 not found)</LegendDescription>
           </LegendItem>
           <LegendItem>
             <LegendBadge className="status-5xx">
               <LegendCode>5XX</LegendCode>
             </LegendBadge>
             <LegendLabel>Server Error</LegendLabel>
+            <LegendDescription>Server failed to fulfill a valid request (e.g., internal server error)</LegendDescription>
           </LegendItem>
         </LegendGrid>
       </ChainLegend>
@@ -590,7 +594,7 @@ const LegendGrid = styled.div`
 
 const LegendItem = styled.div`
   display: flex;
-  align-items: center;
+  flex-direction: column;
   padding: ${props => props.theme.spacing.md};
   background-color: ${props => props.theme.colors.background.card};
   border-radius: ${props => props.theme.borderRadius.md};
@@ -601,11 +605,12 @@ const LegendBadge = styled.div`
   width: 60px;
   height: 60px;
   border-radius: ${props => props.theme.borderRadius.md};
-  margin-right: ${props => props.theme.spacing.md};
+  margin-bottom: ${props => props.theme.spacing.md};
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
+  align-self: center;
   
   &.status-2xx {
     background-color: ${props => props.theme.colors.success};
@@ -632,9 +637,18 @@ const LegendCode = styled.span`
 `;
 
 const LegendLabel = styled.div`
-  font-size: ${props => props.theme.fontSizes.md};
   color: ${props => props.theme.colors.text.primary};
+  font-size: ${props => props.theme.fontSizes.md};
   font-weight: ${props => props.theme.fonts.weights.medium};
+  text-align: center;
+  margin-bottom: ${props => props.theme.spacing.xs};
+`;
+
+const LegendDescription = styled.div`
+  font-size: ${props => props.theme.fontSizes.sm};
+  color: ${props => props.theme.colors.text.secondary};
+  text-align: center;
+  line-height: 1.4;
 `;
 
 export default RedirectChain; 

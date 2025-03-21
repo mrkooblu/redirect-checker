@@ -8,7 +8,6 @@ A web application that allows users to check the HTTP status of any URL, track r
 - Track and analyze redirect chains
 - View detailed HTTP response headers
 - Color-coded status indicators
-- Export results (coming soon)
 
 ## Tech Stack
 

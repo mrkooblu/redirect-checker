@@ -8,7 +8,7 @@ import RedirectChain from '@/components/RedirectChain';
 import HeadersTable from '@/components/HeadersTable';
 import ResultsView from '@/components/ResultsView';
 import { RedirectResult } from '@/types/redirect';
-import { FiLink, FiArrowRight, FiClock, FiCode } from 'react-icons/fi';
+import { FiLink, FiArrowRight, FiClock, FiCode, FiExternalLink } from 'react-icons/fi';
 import StyledComponentsProvider from '@/lib/StyledComponentsProvider';
 
 // Define animations OUTSIDE of the component function
@@ -77,16 +77,20 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'chain' | 'headers'>('chain');
   const [isFirstVisit, setIsFirstVisit] = useState<boolean>(true);
   const [stylesLoaded, setStylesLoaded] = useState<boolean>(false);
+  const [hasSeenWelcome, setHasSeenWelcome] = useState<boolean>(false);
   
   // Load cached result on first render
   useEffect(() => {
     try {
-      const cachedResult = localStorage.getItem('cachedRedirectResult');
-      if (cachedResult) {
-        setResult(JSON.parse(cachedResult));
+      // Removed code that loaded cached results
+      
+      // Check if user has seen welcome message before
+      const hasSeenWelcomeMessage = localStorage.getItem('hasSeenWelcome');
+      if (hasSeenWelcomeMessage) {
+        setHasSeenWelcome(true);
       }
     } catch (err) {
-      console.error('Error loading cached result:', err);
+      console.error('Error loading cached data:', err);
     }
   }, []);
 
@@ -129,12 +133,8 @@ export default function Home() {
 
       const data = await response.json();
       setResult(data);
-      // Cache the result
-      try {
-        localStorage.setItem('cachedRedirectResult', JSON.stringify(data));
-      } catch (err) {
-        console.error('Error caching result:', err);
-      }
+      // Removed caching code
+      
       // Set active tab to 'chain' if there are redirects, otherwise to 'headers'
       setActiveTab(data.redirectCount > 0 ? 'chain' : 'headers');
     } catch (err) {
@@ -168,27 +168,50 @@ export default function Home() {
         <Header>
           <h1>301 URL Redirect & HTTP Status Checker</h1>
           <Description>
-            Check the HTTP status of any URL instantly. Track redirect chains, view response headers, 
-            and analyze HTTP status codes.
+            Check the HTTP status of any URL instantly. Track redirect chains and analyze HTTP status codes.
           </Description>
           <HeroIllustration>
             <IconContainer color="primary">
-              <FiLink size={28} />
+              <FiLink size={24} />
             </IconContainer>
             <ArrowContainer>
-              <FiArrowRight size={20} />
-            </ArrowContainer>
-            <IconContainer color="info">
-              <FiArrowRight size={28} />
-            </IconContainer>
-            <ArrowContainer>
-              <FiArrowRight size={20} />
+              <FiArrowRight size={16} />
             </ArrowContainer>
             <IconContainer color="success">
-              <FiCode size={28} />
+              <FiCode size={24} />
             </IconContainer>
           </HeroIllustration>
         </Header>
+
+        {!hasSeenWelcome && (
+          <WelcomeMessage>
+            <WelcomeIcon>👋</WelcomeIcon>
+            <WelcomeContent>
+              <WelcomeTitle>Welcome to the Redirect Checker</WelcomeTitle>
+              <WelcomeText>
+                This tool helps you analyze URL redirects, find redirect chains, and detect SEO issues. 
+                <strong> Unlock more SEO tools</strong> with a Semrush free trial.
+              </WelcomeText>
+              <WelcomeActions>
+                <WelcomeButton 
+                  href="https://www.semrush.com/signup/" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                >
+                  Try Semrush Free <FiExternalLink size={14} />
+                </WelcomeButton>
+                <WelcomeDismiss 
+                  onClick={() => {
+                    setHasSeenWelcome(true);
+                    localStorage.setItem('hasSeenWelcome', 'true');
+                  }}
+                >
+                  Continue to Tool
+                </WelcomeDismiss>
+              </WelcomeActions>
+            </WelcomeContent>
+          </WelcomeMessage>
+        )}
 
         <MainContent>
           <UrlInputForm onSubmit={handleCheckUrl} isLoading={loading} />
@@ -224,15 +247,17 @@ const BackgroundPattern = styled.div`
 `;
 
 const Header = styled.header`
-  padding: ${props => props.theme.spacing.xl} 0;
+  padding: ${props => props.theme.spacing.lg} 0;
   text-align: center;
-  background-color: ${props => props.theme.colors.background.secondary};
+  background-color: white;
   position: relative;
   overflow: hidden;
+  margin: ${props => props.theme.spacing.md} auto;
+  max-width: 1000px;
   
   h1 {
-    margin-bottom: ${props => props.theme.spacing.md};
-    font-size: clamp(2rem, 5vw, 2.5rem);
+    margin-bottom: ${props => props.theme.spacing.sm};
+    font-size: clamp(1.8rem, 4vw, 2.2rem);
   }
 `;
 
@@ -240,14 +265,15 @@ const Description = styled.p`
   max-width: 700px;
   margin: 0 auto;
   color: ${props => props.theme.colors.text.secondary};
+  font-size: 1rem;
 `;
 
 const HeroIllustration = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin: ${props => props.theme.spacing.xl} auto;
-  max-width: 500px;
+  margin: ${props => props.theme.spacing.md} auto;
+  max-width: 400px;
 `;
 
 interface IconContainerProps {
@@ -284,5 +310,73 @@ const MainContent = styled.main`
   
   @media (max-width: ${props => props.theme.breakpoints.sm}) {
     padding: ${props => props.theme.spacing.md};
+  }
+`;
+
+const WelcomeMessage = styled.div`
+  background-color: ${props => props.theme.colors.background.secondary};
+  padding: ${props => props.theme.spacing.md};
+  border-radius: ${props => props.theme.spacing.sm};
+  margin-bottom: ${props => props.theme.spacing.xl};
+  display: flex;
+  align-items: center;
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const WelcomeIcon = styled.span`
+  font-size: 2rem;
+  margin-right: ${props => props.theme.spacing.md};
+`;
+
+const WelcomeContent = styled.div`
+  flex: 1;
+`;
+
+const WelcomeTitle = styled.h2`
+  margin-bottom: ${props => props.theme.spacing.sm};
+  font-size: 1.5rem;
+  color: ${props => props.theme.colors.text.primary};
+`;
+
+const WelcomeText = styled.p`
+  margin-bottom: ${props => props.theme.spacing.md};
+  color: ${props => props.theme.colors.text.secondary};
+`;
+
+const WelcomeActions = styled.div`
+  display: flex;
+  gap: ${props => props.theme.spacing.md};
+  align-items: center;
+`;
+
+const WelcomeButton = styled.a`
+  background-color: ${props => props.theme.colors.success};
+  color: white;
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  border-radius: ${props => props.theme.spacing.sm};
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: ${props => props.theme.spacing.xs};
+
+  &:hover {
+    opacity: 0.85;
+  }
+`;
+
+const WelcomeDismiss = styled.button`
+  background: none;
+  border: none;
+  color: ${props => props.theme.colors.text.secondary};
+  cursor: pointer;
+  padding: ${props => props.theme.spacing.sm};
+  text-decoration: underline;
+  
+  &:hover {
+    color: ${props => props.theme.colors.text.primary};
   }
 `;

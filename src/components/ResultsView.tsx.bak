@@ -157,7 +157,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onC
         title: 'Too many redirects detected',
         description: 'Long redirect chains can slow down your website and waste crawl budget',
         cta: 'Fix redirect chains with Semrush Site Audit',
-        link: 'https://www.semrush.com/blog/redirects/'
+        link: 'https://www.semrush.com/siteaudit/'
       };
     }
     
@@ -188,7 +188,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onC
         title: 'Temporary redirects found',
         description: 'Consider using permanent (301) redirects for SEO benefits',
         cta: 'Learn redirect best practices with Semrush',
-        link: 'https://www.semrush.com/blog/301-vs-302-redirect/'
+        link: 'https://www.semrush.com/blog/301-vs-302-redirects-seo/'
       };
     }
     
@@ -595,7 +595,7 @@ const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onC
                               </ExplanationText>
                               {/* Add contextual educational link */}
                               {item.factor === 'Redirect Chain Length' && (
-                                <ContextualLink href="https://www.semrush.com/blog/redirects/" target="_blank" rel="noopener noreferrer">
+                                <ContextualLink href="https://www.semrush.com/blog/url-redirect/#redirect-chains" target="_blank" rel="noopener noreferrer">
                                   Learn more about redirect chains <FiExternalLink size={12} />
                                 </ContextualLink>
                               )}
@@ -605,13 +605,8 @@ const ResultsView: React.FC<ResultsViewProps> = ({ result, isLoading, error, onC
                                 </ContextualLink>
                               )}
                               {item.factor === 'Temporary Redirects (302/307)' && (
-                                <ContextualLink href="https://www.semrush.com/blog/301-vs-302-redirect/" target="_blank" rel="noopener noreferrer">
+                                <ContextualLink href="https://www.semrush.com/blog/301-vs-302-redirects-seo/" target="_blank" rel="noopener noreferrer">
                                   Learn more about redirect types <FiExternalLink size={12} />
-                                </ContextualLink>
-                              )}
-                              {item.factor === 'Temporary Redirects (302/307)' && (
-                                <ContextualLink href="https://www.semrush.com/blog/307-redirect/" target="_blank" rel="noopener noreferrer">
-                                  Learn about 307 redirects <FiExternalLink size={12} />
                                 </ContextualLink>
                               )}
                             </ExplanationContent>

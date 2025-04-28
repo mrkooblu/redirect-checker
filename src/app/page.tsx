@@ -8,7 +8,6 @@ import RedirectChain from '@/components/RedirectChain';
 import HeadersTable from '@/components/HeadersTable';
 import ResultsView from '@/components/ResultsView';
 import { RedirectResult } from '@/types/redirect';
-import { FiLink, FiArrowRight, FiClock, FiCode, FiExternalLink } from 'react-icons/fi';
 import StyledComponentsProvider from '@/lib/StyledComponentsProvider';
 
 // Define animations OUTSIDE of the component function
@@ -77,18 +76,11 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<'chain' | 'headers'>('chain');
   const [isFirstVisit, setIsFirstVisit] = useState<boolean>(true);
   const [stylesLoaded, setStylesLoaded] = useState<boolean>(false);
-  const [hasSeenWelcome, setHasSeenWelcome] = useState<boolean>(false);
   
   // Load cached result on first render
   useEffect(() => {
     try {
       // Removed code that loaded cached results
-      
-      // Check if user has seen welcome message before
-      const hasSeenWelcomeMessage = localStorage.getItem('hasSeenWelcome');
-      if (hasSeenWelcomeMessage) {
-        setHasSeenWelcome(true);
-      }
     } catch (err) {
       console.error('Error loading cached data:', err);
     }
@@ -165,53 +157,16 @@ export default function Home() {
     <StyledComponentsProvider>
       <BackgroundPattern />
       <Container $isFirstVisit={isFirstVisit}>
-        <Header>
-          <h1>301 URL Redirect & HTTP Status Checker</h1>
-          <Description>
-            Check the HTTP status of any URL instantly. Track redirect chains and analyze HTTP status codes.
-          </Description>
-          <HeroIllustration>
-            <IconContainer color="primary">
-              <FiLink size={24} />
-            </IconContainer>
-            <ArrowContainer>
-              <FiArrowRight size={16} />
-            </ArrowContainer>
-            <IconContainer color="success">
-              <FiCode size={24} />
-            </IconContainer>
-          </HeroIllustration>
-        </Header>
-
-        {!hasSeenWelcome && (
-          <WelcomeMessage>
-            <WelcomeIcon>👋</WelcomeIcon>
-            <WelcomeContent>
-              <WelcomeTitle>Welcome to the Redirect Checker</WelcomeTitle>
-              <WelcomeText>
-                This tool helps you analyze URL redirects, find redirect chains, and detect SEO issues. 
-                <strong> Unlock more SEO tools</strong> with a Semrush free trial.
-              </WelcomeText>
-              <WelcomeActions>
-                <WelcomeButton 
-                  href="https://www.semrush.com/signup/" 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                >
-                  Try Semrush Free <FiExternalLink size={14} />
-                </WelcomeButton>
-                <WelcomeDismiss 
-                  onClick={() => {
-                    setHasSeenWelcome(true);
-                    localStorage.setItem('hasSeenWelcome', 'true');
-                  }}
-                >
-                  Continue to Tool
-                </WelcomeDismiss>
-              </WelcomeActions>
-            </WelcomeContent>
-          </WelcomeMessage>
-        )}
+        <HeaderSection>
+          <AppContainer>
+            <HeroContent>
+              <MainTitle>301 URL Redirect & HTTP Status Checker</MainTitle>
+              <Description>
+                Check the HTTP status of any URL instantly. Track redirect chains and analyze HTTP status codes.
+              </Description>
+            </HeroContent>
+          </AppContainer>
+        </HeaderSection>
 
         <MainContent>
           <UrlInputForm onSubmit={handleCheckUrl} isLoading={loading} />
@@ -246,59 +201,76 @@ const BackgroundPattern = styled.div`
   opacity: 0.4;
 `;
 
-const Header = styled.header`
-  padding: ${props => props.theme.spacing.lg} 0;
-  text-align: center;
-  background-color: white;
+// Main header container that spans the full width
+const HeaderSection = styled.div`
   position: relative;
+  margin-bottom: 2.5rem;
+  padding: 4.2rem 0;
+  background: #121737 url('/images/tools-background.svg') no-repeat center center;
+  background-size: cover;
+  width: 100%;
   overflow: hidden;
-  margin: ${props => props.theme.spacing.md} auto;
-  max-width: 1000px;
   
-  h1 {
-    margin-bottom: ${props => props.theme.spacing.sm};
-    font-size: clamp(1.8rem, 4vw, 2.2rem);
+  @media (max-width: 768px) {
+    padding: 2rem 0;
+    margin-bottom: 1.5rem;
   }
 `;
 
-const Description = styled.p`
-  max-width: 700px;
+// Container to center content and control max-width
+const AppContainer = styled.div`
+  max-width: 1200px;
   margin: 0 auto;
-  color: ${props => props.theme.colors.text.secondary};
-  font-size: 1rem;
+  padding: 0 2rem;
   
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    padding: 0 ${props => props.theme.spacing.md};
+  @media (max-width: 768px) {
+    padding: 0 1rem;
   }
 `;
 
-const HeroIllustration = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin: ${props => props.theme.spacing.md} auto;
-  max-width: 400px;
+// Content wrapper for hero text elements
+const HeroContent = styled.div`
+  position: relative;
+  z-index: 1;
+  max-width: 850px;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
-interface IconContainerProps {
-  color: 'primary' | 'success' | 'info' | 'warning' | 'error';
-}
-
-const IconContainer = styled.div<IconContainerProps>`
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: ${props => props.theme.colors[props.color]};
-  color: white;
-  box-shadow: ${props => props.theme.shadows.md};
+// Main title styling
+const MainTitle = styled.h1`
+  font-family: 'Manrope', sans-serif;
+  font-size: 44px;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 2rem;
+  line-height: 1.3;
+  
+  @media (max-width: 768px) {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+  }
 `;
 
-const ArrowContainer = styled.div`
-  margin: 0 ${props => props.theme.spacing.sm};
-  color: ${props => props.theme.colors.text.secondary};
+// Description text styling
+const Description = styled.p`
+  font-family: 'Manrope', sans-serif;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 18px;
+  line-height: 1.8;
+  margin-bottom: 2.5rem;
+  max-width: 750px;
+  
+  @media (max-width: 768px) {
+    font-size: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
 `;
 
 const MainContent = styled.main`
@@ -308,79 +280,11 @@ const MainContent = styled.main`
   margin: 0 auto;
   padding: ${props => props.theme.spacing.xl};
   
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
+  @media (max-width: 768px) {
     padding: ${props => props.theme.spacing.lg};
   }
   
   @media (max-width: ${props => props.theme.breakpoints.sm}) {
     padding: ${props => props.theme.spacing.md};
-  }
-`;
-
-const WelcomeMessage = styled.div`
-  background-color: ${props => props.theme.colors.background.secondary};
-  padding: ${props => props.theme.spacing.md};
-  border-radius: ${props => props.theme.spacing.sm};
-  margin-bottom: ${props => props.theme.spacing.xl};
-  display: flex;
-  align-items: center;
-  max-width: 900px;
-  margin-left: auto;
-  margin-right: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-`;
-
-const WelcomeIcon = styled.span`
-  font-size: 2rem;
-  margin-right: ${props => props.theme.spacing.md};
-`;
-
-const WelcomeContent = styled.div`
-  flex: 1;
-`;
-
-const WelcomeTitle = styled.h2`
-  margin-bottom: ${props => props.theme.spacing.sm};
-  font-size: 1.5rem;
-  color: ${props => props.theme.colors.text.primary};
-`;
-
-const WelcomeText = styled.p`
-  margin-bottom: ${props => props.theme.spacing.md};
-  color: ${props => props.theme.colors.text.secondary};
-`;
-
-const WelcomeActions = styled.div`
-  display: flex;
-  gap: ${props => props.theme.spacing.md};
-  align-items: center;
-`;
-
-const WelcomeButton = styled.a`
-  background-color: ${props => props.theme.colors.success};
-  color: white;
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-  border-radius: ${props => props.theme.spacing.sm};
-  text-decoration: none;
-  transition: background-color 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: ${props => props.theme.spacing.xs};
-
-  &:hover {
-    opacity: 0.85;
-  }
-`;
-
-const WelcomeDismiss = styled.button`
-  background: none;
-  border: none;
-  color: ${props => props.theme.colors.text.secondary};
-  cursor: pointer;
-  padding: ${props => props.theme.spacing.sm};
-  text-decoration: underline;
-  
-  &:hover {
-    color: ${props => props.theme.colors.text.primary};
   }
 `;
